@@ -1,6 +1,6 @@
 import { Navigation } from 'react-native-navigation'
 import { AsyncStorage } from 'react-native';
-import App from './App';
+import App from './src/App';
 
 Navigation.registerComponent('deliveryApp', () => App);
 

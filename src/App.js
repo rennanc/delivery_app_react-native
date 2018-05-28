@@ -11,9 +11,14 @@ import {
   Text,
   View,
   Dimensions,
+  TextInput,
+  Picker,
+  TouchableOpacity,
+  FlatList,
 } from 'react-native';
 import MapView from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
+import RNGooglePlaces from 'react-native-google-places';
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -31,6 +36,12 @@ export default class App extends Component {
 
     // AirBnB's Office, and Apple Park
     this.state = {
+      //PLACES
+      showInput: false,
+      addressQuery: '',
+      predictions: [],
+
+      //MAP
       coordinates: [
         {
           latitude: 37.3317876,
@@ -55,6 +66,18 @@ export default class App extends Component {
     });
   }
 
+  onQueryChange = (text) => {
+    this.setState({addressQuery: text});
+    RNGooglePlaces.getAutocompletePredictions(this.state.addressQuery, {
+      country: 'BR'
+    })
+    .then((places) => {
+      console.log(places);
+      this.setState({predictions: places});
+    })
+    .catch(error => console.log(error.message));
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -65,7 +88,7 @@ export default class App extends Component {
             latitudeDelta: LATITUDE_DELTA,
             longitudeDelta: LONGITUDE_DELTA,
           }}
-          style={StyleSheet.absoluteFill}
+          style={styles.mapContainer}
           ref={c => this.mapView = c}
           onPress={this.onMapPress}
         >
@@ -84,6 +107,9 @@ export default class App extends Component {
                 console.log(`Started routing between "${params.origin}" and "${params.destination}"`);
               }}
               onReady={(result) => {
+
+
+
                 this.mapView.fitToCoordinates(result.coordinates, {
                   edgePadding: {
                     right: (width / 20),
@@ -92,6 +118,7 @@ export default class App extends Component {
                     top: (height / 20),
                   }
                 });
+
               }}
               onError={(errorMessage) => {
                 // console.log('GOT AN ERROR');
@@ -99,6 +126,58 @@ export default class App extends Component {
             />
           )}
         </MapView>
+        <View style={styles.infoContainer}>
+
+          <TextInput
+            ref={input => this.pickUpInput = input}
+            style={styles.input}
+            value={this.props.addressQuery}
+            onChangeText={this.onQueryChange}
+            placeholder={'Current Location'}
+            placeholderTextColor='#9BABB4'
+            underlineColorAndroid={'transparent'}
+            autoFocus
+            />
+            
+            <View style={styles.list}>
+              <FlatList
+              data={this.state.predictions}
+              renderItem={this.renderItem}
+              keyExtractor={this.keyExtractor}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{flexGrow: 1}}
+              />
+            </View>
+            
+            {/*
+          <TextInput 
+            style={styles.input}
+            placeholder="Where to?"
+          />
+          <TextInput 
+            style={styles.input}
+            placeholder="Height"
+            keyboardType='numeric'
+          />
+          <TextInput 
+            style={styles.input}
+            placeholder="Weight"
+            keyboardType='numeric'
+          />
+          <TextInput 
+            style={styles.input}
+            placeholder="Length"
+            keyboardType='numeric'
+            />*/}
+          {/*<Picker
+            selectedValue={this.state.language}
+            style={styles.input}
+            onValueChange={(itemValue, itemIndex) => this.setState({language: itemValue})}>
+            <Picker.Item label="Box 1" value="1" />
+            <Picker.Item label="Box 2" value="2" />
+            <Picker.Item label="Box 2" value="2" />
+          </Picker>*/}
+        </View>
       </View>
     );
   }
@@ -106,9 +185,28 @@ export default class App extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
+    flexDirection: 'column',
+    flex: 1
+  },
+  mapContainer:{
+    flex: 3,
+    width: width,
+  },
+  //info container
+  infoContainer:{
+    flex:1,
+    flexDirection: 'column',
+    /*position: 'absolute',
+    height: 200,
+    backgroundColor: 'white',
+    width: width - 20,*/
+  },
+  input:{
+    flex:1,
+    height: 60,
+    width: width,
   }
 });

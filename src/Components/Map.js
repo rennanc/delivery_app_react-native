@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   Dimensions,
+  PermissionsAndroid,
 } from 'react-native';
 import MapView from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-
+import RNGooglePlaces from 'react-native-google-places';
 
 
 const { width, height } = Dimensions.get('window');
@@ -24,20 +25,28 @@ export default class Map extends Component {
 
         // AirBnB's Office, and Apple Park
         this.state = {
-            //MAP
-            coordinates: [
-            {
+            initialPlace:{
                 latitude: 37.3317876,
                 longitude: -122.0054812,
             },
-            {
-                latitude: 37.771707,
-                longitude: -122.4053769,
-            },
+            //MAP
+            coordinates: [
+                {
+                    latitude: 37.3317876,
+                    longitude: -122.0054812,
+                },
+                {
+                    latitude: 37.771707,
+                    longitude: -122.4053769,
+                },
             ],
         };
 
         this.mapView = null;
+    }
+
+    componentDidMount() {
+        this.getCurrentPlace()
     }
 
     onMapPress = (e) => {
@@ -49,9 +58,38 @@ export default class Map extends Component {
         });
     }
 
+    async  getCurrentPlace(){
+
+        try {
+            const granted = await PermissionsAndroid.request(
+              PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+              {
+                'title': 'Cool Photo App Camera Permission',
+                'message': 'Cool Photo App needs access to your camera ' +
+                           'so you can take awesome pictures.'
+              }
+            )
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                RNGooglePlaces.getCurrentPlace()
+                    .then((results) => {
+                    this.setState({
+                        initialPlace:{
+                            latitude: results.latitude,
+                            longitude: results.longitude,
+                        }
+                    })
+                    return results
+                    })
+                    .catch((error) => console.log(error.message))
+            } else {
+              console.log("access fine location permission denied")
+            }
+          } catch (err) {
+            console.warn(err)
+          }
+      }
+
     
-
-
     render(){
         return(
             <MapView
@@ -88,7 +126,7 @@ export default class Map extends Component {
                         right: (width / 20),
                         bottom: (height / 20),
                         left: (width / 20),
-                        top: (height / 20),
+                        top: (height - 50),
                     }
                     });
 
@@ -105,7 +143,9 @@ export default class Map extends Component {
 
 const styles = StyleSheet.create({
     mapContainer:{
-      flex: 3,
+      flex: 1,
       width: width,
+      justifyContent: 'center',
+    alignItems: 'center',
     },
   });

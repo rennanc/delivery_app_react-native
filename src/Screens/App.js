@@ -22,10 +22,9 @@ import RNGooglePlaces from 'react-native-google-places';
 
 import Map from '../Components/Map'
 
-
-
-
 const { width, height } = Dimensions.get('window');
+
+
 export default class App extends Component {
 
   constructor(props) {
@@ -35,48 +34,43 @@ export default class App extends Component {
       showInput: false,
       addressQuery: '',
       predictions: [],
+      textDestiny: '',
+
+      //Map
+
+      coordinates: [
+        {
+            latitude: 37.3317876,
+            longitude: -122.0054812,
+        },
+        {
+            latitude: 37.771707,
+            longitude: -122.4053769,
+        },
+      ],
     }
   }
 
+  
 
-  onQueryChange = (text) => {
-      this.setState({addressQuery: text});
-      RNGooglePlaces.getAutocompletePredictions(this.state.addressQuery, {
-        country: 'BR'
-      })
-      .then((places) => {
-        console.log(places);
-        this.setState({predictions: places});
-      })
-      .catch(error => console.log(error.message));
-  }
-
-  onSelectSuggestion(placeID) {
-    console.log(placeID);
-    // getPlaceByID call here
-    RNGooglePlaces.lookUpPlaceByID(placeID)
-    .then((results) => console.log(results))
-    .catch((error) => console.log(error.message));
-
+  openSearchModal() {
+    RNGooglePlaces.openAutocompleteModal(
+      {
+        country: 'US',
+        latitude: 53.544389,
+        longitude: -113.490927,
+        useOverlay: true,
+      }
+    )
+    .then((place) => {
+    console.log(place);
     this.setState({
-      showInput: false,
-      predictions: []
-    });
-  }
-
-  renderItem = ({ item }) => {
-    return (
-      <View style={styles.listItemWrapper}>
-          <TouchableOpacity style={styles.listItem}
-              onPress={() => this.onSelectSuggestion(item.placeID)}>
-              <View style={styles.placeMeta}>
-                  <Text style={styles.primaryText}>{item.primaryText}</Text>
-                  <Text style={styles.secondaryText}>{item.secondaryText}</Text>
-              </View>
-          </TouchableOpacity>
-          <View style={styles.divider} />
-      </View>
-    );
+      textDestiny: place.address,
+    })
+		// place represents user's selection from the
+		// suggestions and it is a simplified Google Place object.
+    })
+    .catch(error => console.log(error.message));  // error is a Javascript Error object
   }
 
   render() {
@@ -84,25 +78,18 @@ export default class App extends Component {
       <View style={styles.container}>
         <Map />
         <View style={styles.infoContainer} >
-
-          <FlatList style={styles.input}
-              data={this.state.predictions}
-              renderItem={this.renderItem}
-              keyExtractor={this.keyExtractor}
-              showsVerticalScrollIndicator={true}
-              contentContainerStyle={{flexGrow: 1}}
-              />
-          <TextInput
-            ref={input => this.pickUpInput = input}
-            style={styles.input}
-            value={this.props.addressQuery}
-            onChangeText={this.onQueryChange}
-            placeholder={'Current Location'}
-            placeholderTextColor='#9BABB4'
+          <TouchableOpacity
+            style={styles.TouchableOpacity}
+            onPress={() => this.openSearchModal()}
+          >
+            <TextInput style={styles.input}
             underlineColorAndroid={'transparent'}
-            
+            value={this.state.textDestiny}
+            editable={false} selectTextOnFocus={false}
+            placeholder="Where to?"
             />
-          </View>
+          </TouchableOpacity>
+        </View>
 
             
           {/*
@@ -140,33 +127,37 @@ export default class App extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
-    flexDirection: 'column',
-    flex: 1
-  },
-  mapContainer:{
-    flex: 3,
-    width: width,
+    flex: 1,
   },
   //info container
   infoContainer:{
-    flex:1,
-    height:200,
+    height: 60,
+    width: width - 20,
+    marginTop: 20,
+    position: 'absolute',
     flexDirection: 'column',
+    borderRadius: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 1
     /*position: 'absolute',
     height: 200,
     backgroundColor: 'white',
     width: width - 20,*/
   },
+  TouchableOpacity:{
+    flex:1,
+    backgroundColor: '#fff',
+  },
   input:{
     flex:1,
-    height: 60,
-    width: width,
-  },
-  listItemWrapper: {
-    backgroundColor: 'transparent',
-    height: 56
-  },
+    paddingLeft: 10,
+    fontSize: 20,
+  }
+  
 });

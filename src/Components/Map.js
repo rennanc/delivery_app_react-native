@@ -146,6 +146,6 @@ const styles = StyleSheet.create({
       flex: 1,
       width: width,
       justifyContent: 'center',
-    alignItems: 'center',
+      alignItems: 'center',
     },
-  });
+});

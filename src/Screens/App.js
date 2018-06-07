@@ -10,8 +10,6 @@ import {
   View,
 } from 'react-native';
 
-import RNGooglePlaces from 'react-native-google-places';
-
 import Map from '../Components/Map'
 import InputSearchPlace from '../Components/InputSearchPlace'
 import PackageDetails from '../Components/PackageDetails'
@@ -25,9 +23,9 @@ export default class App extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Map  />
+        <Map />
         <InputSearchPlace  />
-        <PackageDetails />
+        <PackageDetails  />
       </View>
     );
   }
@@ -35,7 +33,6 @@ export default class App extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
     flex: 1,

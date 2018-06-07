@@ -20,10 +20,10 @@ export default class PackageDetails extends Component {
     render(){
         return(
             <View style={styles.container}>
-              <View>
+              <View style={styles.block} >
                 <Icon name="box" size={100} color="#900" />
               </View>
-              <View>
+              <View style={styles.block}>
                 <Text>Height</Text>
                 <NumericInput onChange={value => console.log(value)} rounded 
                 textColor='#59656F'
@@ -33,7 +33,7 @@ export default class PackageDetails extends Component {
                 leftButtonBackgroundColor={leftButtonBackgroundColor}
                 rightButtonBackgroundColor={rightButtonBackgroundColor}
                 />
-                <Text>Weight</Text>
+                <Text>Width</Text>
                 <NumericInput onChange={value => console.log(value)} rounded 
                 textColor='#59656F'
                 initValue={1}
@@ -70,9 +70,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
-    width: width - 20,
-    marginTop: 100,
+    width: width - 30,
     borderRadius: 10,
+    bottom: 25,
+  },
+  block:{
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   }
 });
 

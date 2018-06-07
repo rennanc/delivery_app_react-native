@@ -123,10 +123,10 @@ export default class Map extends Component {
 
                     this.mapView.fitToCoordinates(result.coordinates, {
                     edgePadding: {
-                        right: (width / 20),
-                        bottom: (height / 20),
-                        left: (width / 20),
-                        top: (height - 50),
+                        right: (width / 120),
+                        bottom: (height / 120) + 600,
+                        left: (width / 120),
+                        top: (height / 120) + 300,
                     }
                     });
 

@@ -7,6 +7,8 @@ import {
   Dimensions,
 } from 'react-native';
 
+import RNGooglePlaces from 'react-native-google-places';
+
 export default class InputSearchPlace extends Component {
 
     constructor(props) {

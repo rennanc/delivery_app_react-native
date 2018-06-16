@@ -119,8 +119,6 @@ export default class Map extends Component {
                 }}
                 onReady={(result) => {
 
-
-
                     this.mapView.fitToCoordinates(result.coordinates, {
                     edgePadding: {
                         right: (width / 120),
@@ -132,7 +130,7 @@ export default class Map extends Component {
 
                 }}
                 onError={(errorMessage) => {
-                    // console.log('GOT AN ERROR');
+                     console.log('GOT AN ERROR');
                 }}
                 />
             )}

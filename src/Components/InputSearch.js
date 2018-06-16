@@ -9,7 +9,7 @@ import {
 
 import RNGooglePlaces from 'react-native-google-places';
 
-export default class InputSearchPlace extends Component {
+export default class InputSearch extends Component {
 
     constructor(props) {
         super(props);
@@ -45,7 +45,7 @@ export default class InputSearchPlace extends Component {
           }
         )
         .then((place) => {
-        console.log(place);
+            this.props.inputSearchCallBack(place)
         this.setState({
           textDestiny: place.address,
         })
@@ -56,6 +56,7 @@ export default class InputSearchPlace extends Component {
     }
     
     render(){
+
         return(
             <View style={styles.infoContainer}>
                 <TouchableOpacity

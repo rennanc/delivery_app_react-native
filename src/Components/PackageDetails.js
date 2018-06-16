@@ -8,13 +8,41 @@ import {
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Feather'
-
 import NumericInput from 'react-native-numeric-input'
+
+const measureEnum = { 
+  HEIGHT: 'height',
+  WIDTH: 'width',
+  LENGTH: 'length',
+};
 
 export default class PackageDetails extends Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+          measures: {
+            height: 1,
+            width: 1,
+            length: 1,
+          },
+        }
+    }
+
+    changeMeasures(value,measureEnum){
+      var height = this.state.measures.height
+      var width = this.state.measures.width
+      var length = this.state.measures.length
+
+      this.setState({
+        measures:{
+          height,
+          width,
+          length,
+          [measureEnum]: value
+        },
+      })
+      this.props.packageDetailsCallBack(this.state.measures)
     }
     
     render(){
@@ -25,7 +53,7 @@ export default class PackageDetails extends Component {
               </View>
               <View style={styles.block}>
                 <Text>Height</Text>
-                <NumericInput onChange={value => console.log(value)} rounded 
+                <NumericInput onChange={value => this.changeMeasures(value, measureEnum.HEIGHT)} rounded 
                 textColor='#59656F'
                 initValue={1}
                 minValue={1}
@@ -34,7 +62,7 @@ export default class PackageDetails extends Component {
                 rightButtonBackgroundColor={rightButtonBackgroundColor}
                 />
                 <Text>Width</Text>
-                <NumericInput onChange={value => console.log(value)} rounded 
+                <NumericInput onChange={value => this.changeMeasures(value, measureEnum.WIDTH)} rounded 
                 textColor='#59656F'
                 initValue={1}
                 minValue={1}
@@ -43,7 +71,7 @@ export default class PackageDetails extends Component {
                 rightButtonBackgroundColor={rightButtonBackgroundColor}
                 />
                 <Text>Length</Text>
-                <NumericInput onChange={value => console.log(value)} rounded 
+                <NumericInput onChange={value => this.changeMeasures(value, measureEnum.LENGTH)} rounded 
                 textColor='#59656F'
                 initValue={1}
                 minValue={1} 

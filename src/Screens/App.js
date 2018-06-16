@@ -11,21 +11,41 @@ import {
 } from 'react-native';
 
 import Map from '../Components/Map'
-import InputSearchPlace from '../Components/InputSearchPlace'
+import InputSearch from '../Components/InputSearch'
 import PackageDetails from '../Components/PackageDetails'
 
 export default class App extends Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      placeDestiny: {},
+      boxMeasures: {
+        width: 0,
+        height: 0,
+        length: 0,
+      } 
+    }
+  }
+
+  inputSearchCallBack(placeDestiny){
+    this.setState({
+      placeDestiny
+    })
+  }
+
+  packageDetailsCallBack(boxMeasures){
+    this.setState({
+      boxMeasures
+    })
   }
 
   render() {
     return (
       <View style={styles.container}>
         <Map />
-        <InputSearchPlace  />
-        <PackageDetails  />
+        <InputSearch inputSearchCallBack={this.inputSearchCallBack.bind(this)}  />
+        <PackageDetails packageDetailsCallBack={this.packageDetailsCallBack.bind(this)}  />
       </View>
     );
   }

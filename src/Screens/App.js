@@ -19,19 +19,37 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      placeDestiny: {},
+      showPath: false,
+      destinationCoordinate: {
+        latitude: 0.0,
+        longitude: 0.0,
+      },
       boxMeasures: {
         width: 0,
         height: 0,
         length: 0,
-      } 
+      },
+      pathDetails:{
+        distance: '',
+        duration: '',
+        fare: {},
+        coordinates: [],
+      }
     }
   }
 
-  inputSearchCallBack(placeDestiny){
+  inputSearchCallBack(destinationCoordinate){
     this.setState({
-      placeDestiny
+      destinationCoordinate: {
+          latitude: destinationCoordinate.latitude,
+          longitude: destinationCoordinate.longitude,
+      },
+      showPath: true,
     })
+  }
+
+  pathDetailsCallback(pathDetails){
+    console.warn("distance "+pathDetails.distance+ "\n duration " + pathDetails.duration + "\n fare "+ pathDetails.fare)
   }
 
   packageDetailsCallBack(boxMeasures){
@@ -43,7 +61,10 @@ export default class App extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Map />
+        <Map 
+            showPath={this.state.showPath}
+            destinationCoordinate={this.state.destinationCoordinate}
+            pathDetailsCallback={this.pathDetailsCallback.bind(this)} />
         <InputSearch inputSearchCallBack={this.inputSearchCallBack.bind(this)}  />
         <PackageDetails packageDetailsCallBack={this.packageDetailsCallBack.bind(this)}  />
       </View>

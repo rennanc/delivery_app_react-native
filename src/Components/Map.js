@@ -22,6 +22,7 @@ export default class Map extends Component {
 
     constructor(props) {
         super(props);
+       // this.getCurrentPlace()
 
         // AirBnB's Office, and Apple Park
         this.state = {
@@ -35,18 +36,20 @@ export default class Map extends Component {
                     latitude: 37.3317876,
                     longitude: -122.0054812,
                 },
-                {
-                    latitude: 37.771707,
-                    longitude: -122.4053769,
-                },
             ],
+            pathResult: {
+                distance: '',
+                duration: '',
+                fare: {},
+                coordinates: [],
+            }
         };
 
         this.mapView = null;
     }
 
     componentDidMount() {
-        this.getCurrentPlace()
+        this.loadCoordinates()
     }
 
     onMapPress = (e) => {
@@ -58,7 +61,27 @@ export default class Map extends Component {
         });
     }
 
-    async  getCurrentPlace(){
+    loadCoordinates(){
+        this.setState({
+            coordinates: [
+              ...this.state.coordinates,
+              this.props.destinationCoordinate,
+            ],
+        });
+    }
+
+    adjustZoomMap(){
+        this.mapView.fitToCoordinates(this.state.pathResult.coordinates, {
+            edgePadding: {
+                right: (width / 120),
+                bottom: (height / 120) + 600,
+                left: (width / 120),
+                top: (height / 120) + 300,
+            }
+        });
+    }
+
+    async getCurrentPlace(){
 
         try {
             const granted = await PermissionsAndroid.request(
@@ -72,13 +95,13 @@ export default class Map extends Component {
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
                 RNGooglePlaces.getCurrentPlace()
                     .then((results) => {
-                    this.setState({
-                        initialPlace:{
-                            latitude: results.latitude,
-                            longitude: results.longitude,
-                        }
-                    })
-                    return results
+                        this.setState({
+                            initialPlace:{
+                                latitude: results.latitude,
+                                longitude: results.longitude,
+                            }
+                        })
+                        return results
                     })
                     .catch((error) => console.log(error.message))
             } else {
@@ -91,6 +114,9 @@ export default class Map extends Component {
 
     
     render(){
+
+        const { pathDetailsCallback } = this.props;
+
         return(
             <MapView
             initialRegion={{
@@ -103,37 +129,37 @@ export default class Map extends Component {
             ref={c => this.mapView = c}
             onPress={this.onMapPress}
             >
-            {this.state.coordinates.map((coordinate, index) =>
-                <MapView.Marker key={`coordinate_${index}`} coordinate={coordinate} />
-            )}
-            {(this.state.coordinates.length >= 2) && (
-                <MapViewDirections
-                origin={this.state.coordinates[0]}
-                waypoints={ (this.state.coordinates.length > 2) ? this.state.coordinates.slice(1, -1): null}
-                destination={this.state.coordinates[this.state.coordinates.length-1]}
-                apikey={GOOGLE_MAPS_APIKEY}
-                strokeWidth={3}
-                strokeColor="hotpink"
-                onStart={(params) => {
-                    console.log(`Started routing between "${params.origin}" and "${params.destination}"`);
-                }}
-                onReady={(result) => {
+                {
+                    <MapView.Marker key={'coordinate_1'} coordinate={this.props.destinationCoordinate} />
+                    /*this.state.coordinates.map((coordinate, index) =>
+                    <MapView.Marker key={`coordinate_${index}`} coordinate={coordinate} />
+                    )*/
+                }
+                {(this.props.showPath) && (
+                    <MapViewDirections
+                    origin={this.state.coordinates[0] != null ? this.state.coordinates[0] : null}
+                    waypoints={ (this.state.coordinates.length > 2) ? this.state.coordinates.slice(1, -1): null}
+                    destination={this.props.destinationCoordinate}
+                    apikey={GOOGLE_MAPS_APIKEY}
+                    strokeWidth={3}
+                    strokeColor="hotpink"
+                    onStart={(params) => {
+                        console.warn(`Started routing between "${params.origin}" and "${params.destination}"`);
+                    }}
+                    onReady={(result) => {
+                        this.setState({
+                            pathResult: result
+                        })
+                        pathDetailsCallback(this.state.pathResult)
+                        this.adjustZoomMap()
 
-                    this.mapView.fitToCoordinates(result.coordinates, {
-                    edgePadding: {
-                        right: (width / 120),
-                        bottom: (height / 120) + 600,
-                        left: (width / 120),
-                        top: (height / 120) + 300,
-                    }
-                    });
-
-                }}
-                onError={(errorMessage) => {
-                     console.log('GOT AN ERROR');
-                }}
-                />
-            )}
+                    }}
+                    onError={(errorMessage) => {
+                        console.warn('deu ruim')
+                        console.log('GOT AN ERROR');
+                    }}
+                    />
+                )}
             </MapView>
         );
     }

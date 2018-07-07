@@ -13,6 +13,7 @@ import {
 import Map from '../Components/Map'
 import InputSearch from '../Components/InputSearch'
 import PackageDetails from '../Components/PackageDetails'
+import PaymentDetails from '../Components/PaymentDetails'
 
 export default class App extends Component {
 
@@ -49,7 +50,9 @@ export default class App extends Component {
   }
 
   pathDetailsCallback(pathDetails){
-    console.warn("distance "+pathDetails.distance+ "\n duration " + pathDetails.duration + "\n fare "+ pathDetails.fare)
+    this.setState({
+      pathDetails
+    })
   }
 
   packageDetailsCallBack(boxMeasures){
@@ -66,6 +69,7 @@ export default class App extends Component {
             destinationCoordinate={this.state.destinationCoordinate}
             pathDetailsCallback={this.pathDetailsCallback.bind(this)} />
         <InputSearch inputSearchCallBack={this.inputSearchCallBack.bind(this)}  />
+        <PaymentDetails pathDetails={this.state.pathDetails} />
         <PackageDetails packageDetailsCallBack={this.packageDetailsCallBack.bind(this)}  />
       </View>
     );

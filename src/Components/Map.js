@@ -144,7 +144,7 @@ export default class Map extends Component {
                     strokeWidth={3}
                     strokeColor="hotpink"
                     onStart={(params) => {
-                        console.warn(`Started routing between "${params.origin}" and "${params.destination}"`);
+                        //console.warn(`Started routing between "${params.origin}" and "${params.destination}"`);
                     }}
                     onReady={(result) => {
                         this.setState({

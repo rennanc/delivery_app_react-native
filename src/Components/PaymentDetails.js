@@ -7,8 +7,8 @@ import {
 } from 'react-native';
 
 const basePrice = 5;
-const valueMille = 0.1234;
-const valueTime = 0.2;
+const valueMille = 1.041;
+const valueTime = 1.041;
 
 export default class PaymentDetails extends Component {
 
@@ -33,7 +33,7 @@ export default class PaymentDetails extends Component {
         var valueTimeTotal = pathDetails.duration * valueTime
 
         priceTotal = basePrice + valueTimeTotal + valueMilleTotal
-        console.warn("valueMillleTotal: "+ valueMilleTotal + "\n valueTimeTotal" + valueTimeTotal + "\n priceTotal" + priceTotal)
+        console.warn("valueMilesTotal: "+ valueMilleTotal + "\n valueTimeTotal" + valueTimeTotal + "\n priceTotal" + priceTotal)
       }
       return priceTotal
     }

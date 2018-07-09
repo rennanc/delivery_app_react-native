@@ -27,14 +27,14 @@ export default class Map extends Component {
         // AirBnB's Office, and Apple Park
         this.state = {
             initialPlace:{
-                latitude: 37.3317876,
-                longitude: -122.0054812,
+                latitude: 40.233845,
+                longitude:-111.658531,
             },
             //MAP
             coordinates: [
                 {
-                    latitude: 37.3317876,
-                    longitude: -122.0054812,
+                    latitude: 40.233845,
+                    longitude:-111.658531,
                 },
             ],
             pathResult: {

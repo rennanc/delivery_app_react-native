@@ -28,7 +28,9 @@ public class MainApplication extends NavigationApplication implements ReactAppli
       // No need to add RnnPackage and MainReactPackage
       return Arrays.<ReactPackage>asList(
         new MapsPackage(),
-        new RNGooglePlacesPackage()
+        new RNGooglePlacesPackage(),
+              new RNFirebasePackage(),
+              new VectorIconsPackage()
           // eg. new VectorIconsPackage()
       );
   }

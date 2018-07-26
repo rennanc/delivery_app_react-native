@@ -14,6 +14,7 @@ import Map from '../Components/Map'
 import InputSearch from '../Components/InputSearch'
 import PackageDetails from '../Components/PackageDetails'
 import PaymentDetails from '../Components/PaymentDetails'
+import firebase from 'react-native-firebase';
 
 export default class App extends Component {
 

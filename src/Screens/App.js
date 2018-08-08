@@ -22,6 +22,9 @@ export default class App extends Component {
 
   constructor(props) {
     super(props);
+
+    this.firebaseAccess()
+
     this.state = {
       showPath: false,
       destinationCoordinate: {
@@ -41,6 +44,25 @@ export default class App extends Component {
       }
     }
   }
+
+  firebaseAccess(){
+    this.ref = firebase.firestore().collection('requests')
+    this.unsubscribe = null
+  }
+
+  addRequestCallBack(){
+    this.ref.add({
+      driver: 'teste2',
+      requester: 'testeRequester',
+      height: this.state.boxMeasures.height,
+      length: this.state.boxMeasures.length,
+      width: this.state.boxMeasures.width,
+      requestDate: new firebase.firestore.FieldValue.serverTimestamp(),
+      startDirection: new firebase.firestore.GeoPoint(1, 2),
+      endDirection: new firebase.firestore.GeoPoint(this.state.destinationCoordinate.latitude, this.state.destinationCoordinate.longitude),
+    })
+  }
+
 
   inputSearchCallBack(destinationCoordinate){
     this.setState({
@@ -73,7 +95,7 @@ export default class App extends Component {
             pathDetailsCallback={this.pathDetailsCallback.bind(this)} />
         <InputSearch inputSearchCallBack={this.inputSearchCallBack.bind(this)}  />
         <PaymentDetails pathDetails={this.state.pathDetails} />
-        <PackageDetails packageDetailsCallBack={this.packageDetailsCallBack.bind(this)}  />
+        <PackageDetails addRequestCallBack={this.addRequestCallBack.bind(this)} packageDetailsCallBack={this.packageDetailsCallBack.bind(this)}  />
       </View>
     );
   }

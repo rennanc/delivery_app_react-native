@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import {
   StyleSheet,
-  TextInput,
   View,
   Text,
   Dimensions,
+  Button
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Feather'
@@ -44,16 +44,24 @@ export default class PackageDetails extends Component {
       })
       this.props.packageDetailsCallBack(this.state.measures)
     }
-    
+
     render(){
+      const { addRequestCallBack } = this.props;
+
         return(
             <View style={styles.container}>
               <View style={styles.block} >
                 <Icon name="box" size={100} color="#900" />
+                <Button
+                  title={'Pedir'}
+                  onPress={ () => addRequestCallBack()}
+                />
               </View>
               <View style={styles.block}>
                 <Text>Height</Text>
-                <NumericInput onChange={value => this.changeMeasures(value, measureEnum.HEIGHT)} rounded 
+                <NumericInput onChange={value => this.changeMeasures(value, measureEnum.HEIGHT)}
+                valueType={'real'}
+                rounded 
                 textColor='#59656F'
                 initValue={1}
                 minValue={1}
@@ -62,7 +70,9 @@ export default class PackageDetails extends Component {
                 rightButtonBackgroundColor={rightButtonBackgroundColor}
                 />
                 <Text>Width</Text>
-                <NumericInput onChange={value => this.changeMeasures(value, measureEnum.WIDTH)} rounded 
+                <NumericInput onChange={value => this.changeMeasures(value, measureEnum.WIDTH)} 
+                valueType={'real'}
+                rounded 
                 textColor='#59656F'
                 initValue={1}
                 minValue={1}
@@ -71,7 +81,9 @@ export default class PackageDetails extends Component {
                 rightButtonBackgroundColor={rightButtonBackgroundColor}
                 />
                 <Text>Length</Text>
-                <NumericInput onChange={value => this.changeMeasures(value, measureEnum.LENGTH)} rounded 
+                <NumericInput onChange={value => this.changeMeasures(value, measureEnum.LENGTH)} 
+                valueType={'real'}
+                rounded 
                 textColor='#59656F'
                 initValue={1}
                 minValue={1} 

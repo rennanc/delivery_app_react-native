@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   Dimensions,
+  Alert,
   PermissionsAndroid,
 } from 'react-native';
 import MapView from 'react-native-maps';
@@ -16,20 +17,29 @@ const LONGITUDE = -122.4053769;
 const LATITUDE_DELTA = 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
+const initialRegion = {
+    latitude: -37.78825,
+    longitude: -122.4324,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  }
+
 const GOOGLE_MAPS_APIKEY = 'AIzaSyCECNQxQ6pwCZZ42iIOCRBfRulCH6yYWsI';
 
 export default class Map extends Component {
 
     constructor(props) {
         super(props);
-       // this.getCurrentPlace()
-
+       
         // AirBnB's Office, and Apple Park
         this.state = {
-            initialPlace:{
-                latitude: 40.233845,
-                longitude:-111.658531,
+            region: {
+                latitude: -37.78825,
+                longitude: -122.4324,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
             },
+            ready: true,
             //MAP
             coordinates: [
                 {
@@ -62,6 +72,7 @@ export default class Map extends Component {
     }
 
     loadCoordinates(){
+        this.getCurrentPosition()
         this.setState({
             coordinates: [
               ...this.state.coordinates,
@@ -69,6 +80,7 @@ export default class Map extends Component {
             ],
         });
     }
+    
 
     adjustZoomMap(){
         this.mapView.fitToCoordinates(this.state.pathResult.coordinates, {
@@ -81,7 +93,55 @@ export default class Map extends Component {
         });
     }
 
-    async getCurrentPlace(){
+    getCurrentPosition() {
+        try {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const region = {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                latitudeDelta: LATITUDE_DELTA,
+                longitudeDelta: LONGITUDE_DELTA,
+              };
+              this.setRegion(region);
+            },
+            (error) => {
+              //TODO: better design
+              switch (error.code) {
+                case 1:
+                  if (Platform.OS === "ios") {
+                    Alert.alert("", "To identify your location, enable permission for the Application under Settings - Privacy - Location");
+                  } else {
+                    Alert.alert("", "To identify your location, enable Application permission in Settings - Apps - DeliveryApp - Location");
+                  }
+                  break;
+                default:
+                  Alert.alert("", "Error detecting your location");
+              }
+            }
+          );
+        } catch(e) {
+          alert(e.message || "");
+        }
+      };
+
+    setRegion(region) {
+        if(this.state.ready) {
+            setTimeout(() => this.map.animateToRegion(region), 10);
+        }
+        this.setState({ region });
+    }
+
+    onRegionChange = (region) => {
+        console.log('onRegionChange', region);
+    };
+    
+    onRegionChangeComplete = (region) => {
+        console.log('onRegionChangeComplete', region);
+    };
+    
+    //TODO Use PermissionsAndroid.RESULTS.GRANTED to getCurrentPosition
+    /*async getCurrentPlace(){
 
         try {
             const granted = await PermissionsAndroid.request(
@@ -96,37 +156,36 @@ export default class Map extends Component {
                 RNGooglePlaces.getCurrentPlace()
                     .then((results) => {
                         this.setState({
-                            initialPlace:{
+                            initialRegion:{                                
                                 latitude: results.latitude,
                                 longitude: results.longitude,
                             }
                         })
+                        this.setRegion(this.state.initialRegion);
                         return results
                     })
-                    .catch((error) => console.log(error.message))
+                    .catch((error) => console.error(error.message))
             } else {
-              console.log("access fine location permission denied")
+              console.error("access fine location permission denied")
             }
           } catch (err) {
             console.warn(err)
           }
-      }
+      }*/
 
     
     render(){
-
         const { pathDetailsCallback } = this.props;
 
         return(
             <MapView
-            initialRegion={{
-                latitude: LATITUDE,
-                longitude: LONGITUDE,
-                latitudeDelta: LATITUDE_DELTA,
-                longitudeDelta: LONGITUDE_DELTA,
-            }}
+            showsUserLocation
+            initialRegion={initialRegion}
+            loadingEnabled
             style={styles.mapContainer}
-            ref={c => this.mapView = c}
+            ref={ map => { this.map = map }}
+            onRegionChange={this.onRegionChange}
+            onRegionChangeComplete={this.onRegionChangeComplete}
             onPress={this.onMapPress}
             >
                 {
